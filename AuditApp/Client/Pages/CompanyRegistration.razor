@@ -1,0 +1,142 @@
+﻿@page "/cadastrar_empresa"
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@using BlazorInputMask
+@using AuditApp.Shared.Models;
+@using MudBlazor;
+@using System.Text.Json;
+<h3>Cadastro de Empresa</h3>
+<div>
+    <h4>Nome fantasia</h4>
+    <input @bind="_companyRegistration.NomeFantasia" class="form-control" placeholder="Por favor insira o nome fantasia de sua empresa" />
+    <h4>CNPJ</h4>
+    <EditForm Model="_companyRegistration">
+        <InputMask @bind-Value="_companyRegistration.Cnpj"
+                   placeholder="Por favor insira o CNPJ da sua empresa"
+                   data-mask="00.000.000/0000-00"
+                   class="form-control" />
+    </EditForm>
+    <h4>Razão Social</h4>
+    <input @bind="_companyRegistration.RazaoSocial" class="form-control" placeholder="Por favor insira a razão social" />
+    <h4>CEP</h4>
+    <EditForm Model="_companyRegistration">
+        <InputMask @bind-Value="_companyRegistration.Address.Cep"
+                   placeholder="Por favor o CEP da empresa"
+                   data-mask="00000-000"
+        @onfocusout="async() => {await FillCep();}"
+                   class="form-control" />
+    </EditForm>
+    <h4>Endereço</h4>
+    <input @bind="_companyRegistration.Address.Street" class="form-control" placeholder="Rua" disabled="disabled" />
+    <input @bind="_companyRegistration.Address.Neighborhood" class="form-control" placeholder="Bairro" disabled="disabled" />
+    <input @bind="_companyRegistration.Address.City" class="form-control" placeholder="Cidade" disabled="disabled" />
+    <input @bind="_companyRegistration.Address.State" class="form-control" placeholder="Estado" disabled="disabled" />
+    <input @bind="_companyRegistration.Address.Number" class="form-control" placeholder="Número" />
+    <input @bind="_companyRegistration.Address.Complement" class="form-control" placeholder="Complemento" />
+    <button @onclick="SaveCompany" class="btn btn-primary">Cadastrar empresa</button>
+    <div class="mb-3 d-grid gap-2" style="text-align:center">
+        @*<button @onclick="CreateAccount" class="btn btn-primary" hidden=@_createAccountButtonHidden>Criar conta</button>
+        <button @onclick="Login" class="btn btn-primary" hidden=@_loginButtonHidden>Login</button>*@
+    </div>
+</div>
+
+@code {
+    private CompanyModel _companyRegistration = new CompanyModel();
+
+    private async Task SaveCompany()
+    {
+        try
+        {
+            if (
+                string.IsNullOrEmpty(_companyRegistration.NomeFantasia) ||
+                string.IsNullOrEmpty(_companyRegistration.RazaoSocial) ||
+                string.IsNullOrEmpty(_companyRegistration.Cnpj) ||
+                string.IsNullOrEmpty(_companyRegistration.Address.Cep) ||
+                string.IsNullOrEmpty(_companyRegistration.Address.Street) ||
+                string.IsNullOrEmpty(_companyRegistration.Address.Neighborhood) ||
+                string.IsNullOrEmpty(_companyRegistration.Address.City) ||
+                string.IsNullOrEmpty(_companyRegistration.Address.State) ||
+                _companyRegistration.Address.Number == 0)
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Por favor preencha todos os campos!");
+                return;
+            }
+
+            var response = await Http.PostAsJsonAsync("company/register", _companyRegistration);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Empresa cadastrada com sucesso!");
+                NavigationManager.NavigateTo("cadastrar_empresa", true);
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                await JsRuntime.InvokeVoidAsync("alert", message);
+            }
+        }
+        catch (Exception e)
+        {
+                await JsRuntime.InvokeVoidAsync("alert", e.Message);            
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var customAuthStateProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
+            _companyRegistration.AssociatedEmail = await customAuthStateProvider.GetLoggedUserEmail();
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+            NavigationManager.NavigateTo("login", true);
+        }
+    }
+
+    private async ValueTask CreateCompany()
+    {
+        var result = await Http.PostAsJsonAsync("company/register", _companyRegistration);
+
+        if (result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("cadastrar_empresa", true);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+        }
+    }
+
+    private async ValueTask FillCep()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("https://localhost:7154/Cep/GetCepInfo", _companyRegistration.Address.Cep);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var address = JsonSerializer.Deserialize<Address>(await response.Content.ReadAsStreamAsync());
+
+                if (address is not null)
+                {
+                    _companyRegistration.Address = address;
+                }
+            }
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+
+                await JsRuntime.InvokeVoidAsync("alert", errorMessage);
+            }
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+    }
+}
+

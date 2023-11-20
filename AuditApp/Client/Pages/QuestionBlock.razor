@@ -1,0 +1,88 @@
+﻿@using AuditApp.Shared.Models.Dto;
+@inject IJSRuntime JsRuntime
+@inject HttpClient Http
+<div class="card">
+    <h5 class="card-header">@Question</h5>
+    <div class="card-body">
+        <h5 class="card-title">@Requirement</h5>
+        <p class="card-text"></p>
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">@Standard</li>
+        <li class="list-group-item">@State</li>
+        @*<li class="list-group-item">Vestibulum at eros</li>*@
+    </ul>
+    <div class="card-body">
+        <button class="btn btn-success" @onclick="SetStatusToTrue">Atende</button>
+        <button class="btn btn-danger" @onclick="SetStatusToFalse">Não atende</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int QuestionId { get; set; }
+
+    [Parameter]
+    public string Question { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Requirement { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Standard { get; set; } = string.Empty;
+
+    [Parameter]
+    public string State { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsInCompliance { get; set; }
+
+    [Parameter]
+    public string CompanyId { get; set; } = string.Empty;
+
+    private async Task SendValue(bool complies)
+    {
+        try
+        {
+            var answeredQuestion = new AnsweredQuestion()
+                {
+                    CompanyId = CompanyId,
+                    QuestionId = QuestionId,
+                    Complies = complies
+                };
+
+            var response = await Http.PostAsJsonAsync("api/answer/SaveQuestionAnswered", answeredQuestion);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Requisito atualizado com sucesso");
+                IsInCompliance = complies;
+                State = complies ? "Atende" : "Não atende";
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+    }
+
+    private async Task SetStatusToFalse()
+    {
+        await SendValue(false);
+    }
+
+    private async Task SetStatusToTrue()
+    {
+        await SendValue(true);
+    }
+
+    protected override void OnInitialized()
+    {
+        IsInCompliance = IsInCompliance;
+        base.OnInitialized();
+    }
+}

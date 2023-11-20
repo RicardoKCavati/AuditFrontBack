@@ -1,0 +1,34 @@
+﻿@page "/register"
+@using AuditApp.Shared.Models.Dto;
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+@inject HttpClient Http
+<h3>Cadastro de Usuário</h3>
+<EditForm Model="_userRegister" OnSubmit="RegisterUser">
+    <label for="username">Nome</label>
+    <InputText id="username" @bind-Value="_userRegister.Name"/>
+    <label for="username">E-mail</label>
+    <InputText id="username" @bind-Value="_userRegister.Email" type="email" />
+    <label for="password">Senha</label>
+    <InputText id="password" @bind-Value="_userRegister.Password" type="password" />
+    <button type="submit" class="btn btn-primary ">Registrar</button>
+</EditForm>
+
+@code {
+    private UserRegister _userRegister = new UserRegister();
+
+    private async Task RegisterUser()
+    {
+        var result = await Http.PostAsJsonAsync("api/auth/register", _userRegister);
+
+        if (result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("login", true);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+        }
+    }
+}

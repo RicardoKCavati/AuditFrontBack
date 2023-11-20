@@ -1,0 +1,96 @@
+﻿@page "/login"
+@using AuditApp.Shared.Models.Business;
+@using AuditApp.Shared.Models.Dto;
+@using AuditApp.Client
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+<h3>Login</h3>
+
+<EditForm Model="_userLogin" OnSubmit="HandleLogin" hidden="@_hideLoginForm">
+    <label for="username">E-mail</label>
+    <InputText id="username" @bind-Value="_userLogin.Email" type="email" />
+    <label for="password">Senha</label>
+    <InputText id="password" @bind-Value="_userLogin.Password" type="password" />
+    <button type="submit" class="btn btn-primary ">Entrar</button>
+</EditForm>
+<button @onclick="GoToChangePasswordPage" class="btn btn-primary" hidden="@_hideLoginForm">Esqueci a senha</button>
+<label for="code" hidden="@_hideCodeForm">Código</label>
+<input id="code" @bind-value="_code" type="number" min="100000" max="999999" step="1" placeholder="Por favor insira o código que foi enviado para o e-mail do seu cadastro" hidden="@_hideCodeForm" />
+<button @onclick="ValidateCode" type="submit" class="btn btn-primary" hidden="@_hideCodeForm">Enviar código</button>
+
+@code {
+    private UserLogin _userLogin = new UserLogin();
+
+    private bool _hideLoginForm = false;
+    private bool _hideCodeForm = true;
+
+    private int _code = 0;
+
+    private void GoToChangePasswordPage()
+    {
+        NavigationManager.NavigateTo("troca_senha", true);
+    }
+
+    private async Task ValidateCode()
+    {
+        try
+        {
+
+
+            var codeValidation = new CodeValidation
+                {
+                    Code = _code,
+                    Email = _userSession.Email
+                };
+
+            var response = await Http.PostAsJsonAsync("password/ValidateCode", codeValidation);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+                await customAuthStateProvider.UpdateAuthenticationState(_userSession);
+                await JsRuntime.InvokeVoidAsync("alert", "Código válido, você será redirecionado para a página inicial");
+                NavigationManager.NavigateTo("/", true);
+                return;
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+            }
+
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+    }
+
+    private UserSession _userSession;
+
+    private async Task HandleLogin()
+    {
+        var result = await Http.PostAsJsonAsync("api/auth/login", _userLogin);
+
+        if (result.IsSuccessStatusCode)
+        {
+            _userSession = await result.Content.ReadFromJsonAsync<UserSession>();
+
+            _hideCodeForm = false;
+            _hideLoginForm = true;
+
+            await JsRuntime.InvokeVoidAsync("alert", "O código MFA foi enviado para seu e-mail");
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+        }
+
+
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+
+}

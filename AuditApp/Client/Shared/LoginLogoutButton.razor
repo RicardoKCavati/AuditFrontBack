@@ -1,0 +1,32 @@
+﻿@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <button @onclick="Logout" class="btn btn-danger" >Sair</button>
+    </Authorized>
+    <NotAuthorized>
+        <button @onclick="GoRegisterPage" class="btn btn-primary">Registrar</button>
+        <button @onclick="Login" class="btn btn-primary">Entrar</button>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private void Login()
+    {
+        NavigationManager.NavigateTo("login");
+    }
+
+    private void GoRegisterPage()
+    {
+        NavigationManager.NavigateTo("register");
+    }
+
+
+    private async Task Logout()
+    {
+        var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(null);
+    }
+}

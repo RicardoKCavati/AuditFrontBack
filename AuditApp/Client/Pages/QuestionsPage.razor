@@ -1,0 +1,73 @@
+﻿@page "/perguntas"
+@using AuditApp.Shared.Models;
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JsRuntime
+<AuthorizeView>
+    <Authorized>
+        <h3>Lista de Perguntas</h3>
+
+        <section class="card-section">
+            <ul>
+                @foreach (var question in _questions)
+                {
+                    <li style="padding-bottom:10px; list-style-type: none;">
+                        <QuestionBlock Question="@question.Question"
+                                       QuestionId="@question.QuestionId"
+                                       Requirement="@question.Requirement"
+                                       Standard="@question.Standard"
+                                       IsInCompliance="@question.IsInCompliance"
+                                       State="@question.State"
+                                       CompanyId="@question.CompanyId" />
+                    </li>
+                }
+            </ul>
+        </section>
+    </Authorized>
+    <NotAuthorized>
+        Por favor inicie uma sessão para acessar esta página
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private List<QuestionModel> _questions = new List<QuestionModel>();
+
+    private string _companyId = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+
+            var email = await customAuthStateProvider.GetLoggedUserEmail();
+
+            var response = await Http.PostAsJsonAsync("company/GetCompanyIdByEmail", email);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _companyId = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", response.Content.ReadFromJsonAsync<string>());
+                return;
+            }
+
+            response = await Http.PostAsJsonAsync("Question/ObtainQuestions", _companyId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _questions = await response.Content.ReadFromJsonAsync<List<QuestionModel>>();
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+            }
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+    }
+}
