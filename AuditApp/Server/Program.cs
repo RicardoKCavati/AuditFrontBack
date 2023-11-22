@@ -15,7 +15,7 @@ namespace AuditApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connString = "Server=localhost;User Id=root;Password=;Database=webapp-ef;DefaultCommandTimeout=60; Allow User Variables=true";
+            var connString = "Server=localhost;User Id=root;Password=;Database=audit;DefaultCommandTimeout=60; Allow User Variables=true";
             //todo ver como obter isso do appsettings.json
             builder.Services.AddDbContext<AuditContext>(options => options.UseMySql(connString, ServerVersion.AutoDetect(connString)));
             builder.Services.AddScoped<DbContext, AuditContext>();

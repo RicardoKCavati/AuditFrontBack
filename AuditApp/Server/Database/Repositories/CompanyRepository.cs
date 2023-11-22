@@ -50,7 +50,12 @@ namespace AuditApp.Server.Database.Repositories
         {
             var company = _auditContext.Companies.FirstOrDefault(c => c.AssociatedEmail.Equals(email));
 
-            var address = _auditContext.Addresses.FirstOrDefault(a => a.AddressId == company.AddressId);
+            if (company == null)
+            {
+                return null;
+            }
+
+            company.Address = _auditContext.Addresses.FirstOrDefault(a => a.AddressId == company.AddressId);
 
             return company;
         }
