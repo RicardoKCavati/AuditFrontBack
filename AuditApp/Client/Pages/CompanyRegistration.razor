@@ -79,7 +79,7 @@
         }
         catch (Exception e)
         {
-                await JsRuntime.InvokeVoidAsync("alert", e.Message);            
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);            
         }
     }
 
@@ -89,6 +89,33 @@
         {
             var customAuthStateProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
             _companyRegistration.AssociatedEmail = await customAuthStateProvider.GetLoggedUserEmail();
+
+            var response = await Http.PostAsJsonAsync("company/ObtainCompanyByEmail", _companyRegistration.AssociatedEmail);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return;
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadFromJsonAsync<CompanyModel>();
+
+                if (responseContent == null)
+                {
+                    return;
+                }
+
+                _companyRegistration.Cnpj = responseContent.Cnpj;
+                _companyRegistration.NomeFantasia = responseContent.NomeFantasia;
+                _companyRegistration.RazaoSocial = responseContent.RazaoSocial;
+                _companyRegistration.Address = responseContent.Address;
+            }
+            else
+            {
+                var errorStr = await response.Content.ReadAsStringAsync();
+            }
+
         }
         catch (Exception e)
         {

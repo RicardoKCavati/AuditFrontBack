@@ -55,9 +55,35 @@ namespace AuditApp.Server.Controllers
         {
             try
             {
-                var a = _companyRepository.GetByUserEmail(email);
+                var company = _companyRepository.GetByUserEmail(email);
 
-                return a.CompanyId.ToString();
+                if (company == null)
+                {
+                    return StatusCode(500, "Não foi cadastrada nenhuma organização associada ao seu e-mail, as perguntas não serão carregadas.");
+                }
+
+                return company.CompanyId.ToString();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("ObtainCompanyByEmail")]
+        public ActionResult<CompanyModel> ObtainCompanyByEmail([FromBody] string email)
+        {
+            try
+            {
+                var company = _companyRepository.GetByUserEmail(email);
+
+                if (company == null)
+                {
+                    return NotFound();
+                }
+
+                return company;
             }
             catch (Exception e)
             {

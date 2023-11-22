@@ -25,5 +25,6 @@ namespace AuditApp.Server.Database
         public DbSet<UserModel> Users { get; set; }
         public DbSet<QuestionDb> Questions { get; set; }
         public DbSet<AnswerModel> Answers { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

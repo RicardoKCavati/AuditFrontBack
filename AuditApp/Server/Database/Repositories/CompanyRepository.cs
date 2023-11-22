@@ -22,6 +22,7 @@ namespace AuditApp.Server.Database.Repositories
                 empresaBuscada.Cnpj = empresa.Cnpj;
                 empresaBuscada.RazaoSocial = empresa.RazaoSocial;
                 empresaBuscada.Endereco = empresa.Endereco;
+                empresaBuscada.Address = empresa.Address;
 
             }
 
@@ -47,7 +48,11 @@ namespace AuditApp.Server.Database.Repositories
 
         public CompanyModel GetByUserEmail(string email)
         {
-            return _auditContext.Companies.FirstOrDefault(c => c.AssociatedEmail.Equals(email));
+            var company = _auditContext.Companies.FirstOrDefault(c => c.AssociatedEmail.Equals(email));
+
+            var address = _auditContext.Addresses.FirstOrDefault(a => a.AddressId == company.AddressId);
+
+            return company;
         }
 
         public List<CompanyModel> Listar()

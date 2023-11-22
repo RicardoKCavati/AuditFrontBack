@@ -50,7 +50,7 @@
             }
             else
             {
-                await JsRuntime.InvokeVoidAsync("alert", response.Content.ReadFromJsonAsync<string>());
+                await JsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 return;
             }
 

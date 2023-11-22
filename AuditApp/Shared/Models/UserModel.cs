@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace AuditApp.Shared.Models
 {
-    [Table("User")]
+    [Table("Users")]
     public class UserModel
     {
         [JsonPropertyName("UserId")]

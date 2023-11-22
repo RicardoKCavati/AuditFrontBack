@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace AuditApp.Shared.Models
 {
-    [Table("Address")]
+    [Table("Addresses")]
     public class Address
     {
         [JsonPropertyName("AddressId")]
