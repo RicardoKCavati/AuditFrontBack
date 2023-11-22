@@ -131,3 +131,6 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+/.vs/Audit/DesignTimeBuild/.dtbcache.v2
+/.vs/Audit/FileContentIndex/06c5fc6a-1473-4539-bb4a-b40b93c3d8c2.vsidx
+/.vs/Audit/FileContentIndex/8ddcf0c6-fe69-4fa6-ab5e-29ba4d755124.vsidx
