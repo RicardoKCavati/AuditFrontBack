@@ -91,12 +91,13 @@ namespace AuditApp.Server.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(Guid id, CompanyModel empresa)
+        [HttpPost]
+        [Route("Update")]
+        public IActionResult Update(CompanyModel empresa)
         {
             try
             {
-                _companyRepository.Atualizar(id, empresa);
+                _companyRepository.Atualizar(empresa);
 
                 return StatusCode(200);
             }

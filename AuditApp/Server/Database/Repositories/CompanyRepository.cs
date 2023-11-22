@@ -12,9 +12,9 @@ namespace AuditApp.Server.Database.Repositories
             _auditContext = auditContext;
         }
 
-        public void Atualizar(Guid id, CompanyModel empresa)
+        public void Atualizar(CompanyModel empresa)
         {
-            var empresaBuscada = _auditContext.Companies.FirstOrDefault(x => x.CompanyId == id)!;
+            var empresaBuscada = _auditContext.Companies.FirstOrDefault(x => x.CompanyId == empresa.CompanyId)!;
 
             if (empresaBuscada != null)
             {

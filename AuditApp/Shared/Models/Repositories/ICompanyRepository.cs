@@ -6,7 +6,7 @@
 
         List<CompanyModel> Listar();
 
-        void Atualizar(Guid id, CompanyModel empresa);
+        void Atualizar(CompanyModel empresa);
 
         void Deletar(Guid id);
 

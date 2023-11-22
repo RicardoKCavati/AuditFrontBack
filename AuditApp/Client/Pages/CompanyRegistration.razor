@@ -3,10 +3,12 @@
 @inject IJSRuntime JsRuntime
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject PreloadService LoadService
 @using BlazorInputMask
 @using AuditApp.Shared.Models;
 @using MudBlazor;
 @using System.Text.Json;
+@using BlazorBootstrap;
 <h3>Cadastro de Empresa</h3>
 <div>
     <h4>Nome fantasia</h4>
@@ -35,7 +37,8 @@
     <input @bind="_companyRegistration.Address.State" class="form-control" placeholder="Estado" disabled="disabled" />
     <input @bind="_companyRegistration.Address.Number" class="form-control" placeholder="Número" />
     <input @bind="_companyRegistration.Address.Complement" class="form-control" placeholder="Complemento" />
-    <button @onclick="SaveCompany" class="btn btn-primary">Cadastrar empresa</button>
+    <button @onclick="SaveCompany" hidden="@_hideLoginButton" class="btn btn-primary">Cadastrar empresa</button>
+    <button @onclick="UpdateCompany" hidden="@_hideUpdateButton" class="btn btn-primary">Atualizar informações da empresa</button>
     <div class="mb-3 d-grid gap-2" style="text-align:center">
         @*<button @onclick="CreateAccount" class="btn btn-primary" hidden=@_createAccountButtonHidden>Criar conta</button>
         <button @onclick="Login" class="btn btn-primary" hidden=@_loginButtonHidden>Login</button>*@
@@ -44,12 +47,14 @@
 
 @code {
     private CompanyModel _companyRegistration = new CompanyModel();
+    private bool _isLoading = true;
 
-    private async Task SaveCompany()
+    private bool _hideLoginButton = false;
+    private bool _hideUpdateButton = true;
+
+    private bool AreAllFieldsFilled()
     {
-        try
-        {
-            if (
+        if (
                 string.IsNullOrEmpty(_companyRegistration.NomeFantasia) ||
                 string.IsNullOrEmpty(_companyRegistration.RazaoSocial) ||
                 string.IsNullOrEmpty(_companyRegistration.Cnpj) ||
@@ -59,6 +64,48 @@
                 string.IsNullOrEmpty(_companyRegistration.Address.City) ||
                 string.IsNullOrEmpty(_companyRegistration.Address.State) ||
                 _companyRegistration.Address.Number == 0)
+        {
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task UpdateCompany()
+    {
+        try
+        {
+            if (!AreAllFieldsFilled())
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Por favor preencha todos os campos!");
+                return;
+            }
+
+            var response = await Http.PostAsJsonAsync("company/Update", _companyRegistration);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Empresa atualizada com sucesso!");
+                NavigationManager.NavigateTo("cadastrar_empresa", true);
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                await JsRuntime.InvokeVoidAsync("alert", message);
+            }
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+    }
+
+    private async Task SaveCompany()
+    {
+        try
+        {
+            if (!AreAllFieldsFilled())
             {
                 await JsRuntime.InvokeVoidAsync("alert", "Por favor preencha todos os campos!");
                 return;
@@ -79,43 +126,57 @@
         }
         catch (Exception e)
         {
-            await JsRuntime.InvokeVoidAsync("alert", e.Message);            
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
+    }
+
+    private async Task<string> ObtainCompanyInfo()
+    {
+        var customAuthStateProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
+        _companyRegistration.AssociatedEmail = await customAuthStateProvider.GetLoggedUserEmail();
+
+        var response = await Http.PostAsJsonAsync("company/ObtainCompanyByEmail", _companyRegistration.AssociatedEmail);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return "Ainda não há empresas cadastradas para seu usuário";
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadFromJsonAsync<CompanyModel>();
+
+            if (responseContent == null)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+
+            _companyRegistration.Cnpj = responseContent.Cnpj;
+            _companyRegistration.NomeFantasia = responseContent.NomeFantasia;
+            _companyRegistration.RazaoSocial = responseContent.RazaoSocial;
+            _companyRegistration.Address = responseContent.Address;
+            _companyRegistration.CompanyId = responseContent.CompanyId;
+
+            _hideLoginButton = true;
+            _hideUpdateButton = false;
+        }
+        else
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        return "Informações carregadas com sucesso";
     }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var customAuthStateProvider = (CustomAuthStateProvider)AuthenticationStateProvider;
-            _companyRegistration.AssociatedEmail = await customAuthStateProvider.GetLoggedUserEmail();
-
-            var response = await Http.PostAsJsonAsync("company/ObtainCompanyByEmail", _companyRegistration.AssociatedEmail);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return;
-            }
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadFromJsonAsync<CompanyModel>();
-
-                if (responseContent == null)
-                {
-                    return;
-                }
-
-                _companyRegistration.Cnpj = responseContent.Cnpj;
-                _companyRegistration.NomeFantasia = responseContent.NomeFantasia;
-                _companyRegistration.RazaoSocial = responseContent.RazaoSocial;
-                _companyRegistration.Address = responseContent.Address;
-            }
-            else
-            {
-                var errorStr = await response.Content.ReadAsStringAsync();
-            }
-
+            LoadService.Show(SpinnerColor.Dark, "Buscando informações da empresa");
+            var msg = await ObtainCompanyInfo();
+            LoadService.Hide();
+            await Task.Delay(50);
+            await JsRuntime.InvokeVoidAsync("alert", msg);
         }
         catch (Exception e)
         {

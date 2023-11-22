@@ -1,4 +1,5 @@
-﻿@inject AuthenticationStateProvider AuthStateProvider
+﻿@using BlazorBootstrap
+@inject AuthenticationStateProvider AuthStateProvider
 @inherits LayoutComponentBase
 
 <div class="page">
@@ -16,6 +17,7 @@
             @Body
         </article>
     </main>
+    <Preload LoadingText="Carregando..." />
 </div>
 
 @code {

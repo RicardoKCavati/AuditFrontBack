@@ -6,6 +6,7 @@ namespace AuditApp.Shared.Models
     [Table("Companies")]
     public class CompanyModel
     {
+        [JsonPropertyName("CompanyId")]
         public Guid CompanyId { get; set; } = Guid.NewGuid();
         [JsonPropertyName("NomeFantasia")]
         public string? NomeFantasia { get; set; }
