@@ -2,11 +2,13 @@
 @using AuditApp.Shared.Models.Business;
 @using AuditApp.Shared.Models.Dto;
 @using AuditApp.Client
+@using BlazorBootstrap;
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject PreloadService LoadService
 
 <h3>Login</h3>
 
@@ -47,7 +49,9 @@
                     Email = _userSession.Email
                 };
 
+            LoadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("password/ValidateCode", codeValidation);
+            LoadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,7 +77,9 @@
 
     private async Task HandleLogin()
     {
+        LoadService.Show(SpinnerColor.Dark);
         var result = await Http.PostAsJsonAsync("api/auth/login", _userLogin);
+        LoadService.Hide();
 
         if (result.IsSuccessStatusCode)
         {
@@ -81,6 +87,7 @@
 
             _hideCodeForm = false;
             _hideLoginForm = true;
+
 
             await JsRuntime.InvokeVoidAsync("alert", "O código MFA foi enviado para seu e-mail");
         }

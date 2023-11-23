@@ -82,7 +82,9 @@
                 return;
             }
 
+            LoadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("company/Update", _companyRegistration);
+            LoadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {
@@ -111,7 +113,9 @@
                 return;
             }
 
+            LoadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("company/register", _companyRegistration);
+            LoadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {

@@ -1,6 +1,8 @@
 ﻿@using AuditApp.Shared.Models.Dto;
+@using BlazorBootstrap;
 @inject IJSRuntime JsRuntime
 @inject HttpClient Http
+@inject PreloadService LoadService
 <div class="card">
     <h5 class="card-header">@Question</h5>
     <div class="card-body">
@@ -51,7 +53,9 @@
                     Complies = complies
                 };
 
+            LoadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("api/answer/SaveQuestionAnswered", answeredQuestion);
+            LoadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {

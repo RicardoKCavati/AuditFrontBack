@@ -1,8 +1,10 @@
 ﻿@page "/perguntas"
 @using AuditApp.Shared.Models;
+@using BlazorBootstrap;
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JsRuntime
+@inject PreloadService PreloadService
 <AuthorizeView>
     <Authorized>
         <h3>Lista de Perguntas</h3>
@@ -41,8 +43,9 @@
             var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
 
             var email = await customAuthStateProvider.GetLoggedUserEmail();
-
+            PreloadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("company/GetCompanyIdByEmail", email);
+            PreloadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {
@@ -54,7 +57,9 @@
                 return;
             }
 
+            PreloadService.Show(SpinnerColor.Dark);
             response = await Http.PostAsJsonAsync("Question/ObtainQuestions", _companyId);
+            PreloadService.Hide();
 
             if (response.IsSuccessStatusCode)
             {
