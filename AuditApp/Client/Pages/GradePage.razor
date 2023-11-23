@@ -1,0 +1,52 @@
+﻿@page "/avaliação_empresa"
+@using BlazorBootstrap;
+@inject IJSRuntime JsRuntime
+@inject PreloadService PreloadService
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+<h3>Avaliação da Empresa</h3>
+
+@code {
+    private string _companyId = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+            var email = await customAuthStateProvider.GetLoggedUserEmail();
+            PreloadService.Show(SpinnerColor.Dark);
+            var response = await Http.PostAsJsonAsync("company/GetCompanyIdByEmail", email);
+            PreloadService.Hide();
+
+            if (response.IsSuccessStatusCode)
+            {
+                _companyId = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                return;
+            }
+
+            PreloadService.Show(SpinnerColor.Dark);
+
+            response = await Http.PostAsJsonAsync("question/ObtainQuestionStatus", _companyId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var a = response.Content.ReadAsStringAsync().Result;
+                //TODO CONTINUAR AQUI
+            }
+
+            PreloadService.Hide();
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+        finally
+        {
+            PreloadService.Hide();
+        }
+    }
+}

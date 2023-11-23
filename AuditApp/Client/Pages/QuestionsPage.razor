@@ -41,7 +41,6 @@
         try
         {
             var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
-
             var email = await customAuthStateProvider.GetLoggedUserEmail();
             PreloadService.Show(SpinnerColor.Dark);
             var response = await Http.PostAsJsonAsync("company/GetCompanyIdByEmail", email);
@@ -73,6 +72,10 @@
         catch (Exception e)
         {
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+        finally
+        {
+            PreloadService.Hide();            
         }
     }
 }

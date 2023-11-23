@@ -28,6 +28,11 @@ namespace AuditApp.Server.Database.Repositories
             return _auditContext.Answers.ToList();
         }
 
+        public List<AnswerModel> SelectAllByCompanyId(string companyId)
+        {
+            return _auditContext.Answers.Where(answer => answer.CompanyId.Equals(companyId)).ToList();
+        }
+
         public void UpdateAnswer(AnswerModel answer)
         {
             _auditContext.Update(answer);

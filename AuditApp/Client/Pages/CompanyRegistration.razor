@@ -101,6 +101,10 @@
         {
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
+        finally
+        {
+            LoadService.Hide();
+        }
     }
 
     private async Task SaveCompany()
@@ -131,6 +135,10 @@
         catch (Exception e)
         {
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+        finally
+        {
+            LoadService.Hide();
         }
     }
 
@@ -186,6 +194,10 @@
         {
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
             NavigationManager.NavigateTo("login", true);
+        }
+        finally
+        {
+            LoadService.Hide();
         }
     }
 

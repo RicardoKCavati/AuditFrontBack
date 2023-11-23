@@ -13,6 +13,11 @@ namespace AuditApp.Server.Services
             _answerRepository = answerRepository;
         }
 
+        public List<AnswerModel> GetAnswersByCompanyId(string companyId)
+        {
+            return _answerRepository.SelectAllByCompanyId(companyId);
+        }
+
         public void HandleAnswer(AnsweredQuestion answeredQuestion)
         {
             var answer = _answerRepository.GetAnswer(answeredQuestion.CompanyId, answeredQuestion.QuestionId);

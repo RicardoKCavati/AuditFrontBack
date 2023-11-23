@@ -22,10 +22,12 @@ namespace AuditApp
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+            builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
             builder.Services.AddScoped<JwtTokenHandler>();
             builder.Services.AddScoped<UserService>();
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<AnswerService>();
+            builder.Services.AddScoped<QuestionService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();

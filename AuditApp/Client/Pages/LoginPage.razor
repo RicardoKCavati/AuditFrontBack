@@ -71,33 +71,48 @@
         {
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
+        finally
+        {
+            LoadService.Hide();
+        }
     }
 
     private UserSession _userSession;
 
     private async Task HandleLogin()
     {
-        LoadService.Show(SpinnerColor.Dark);
-        var result = await Http.PostAsJsonAsync("api/auth/login", _userLogin);
-        LoadService.Hide();
-
-        if (result.IsSuccessStatusCode)
+        try
         {
-            _userSession = await result.Content.ReadFromJsonAsync<UserSession>();
+            LoadService.Show(SpinnerColor.Dark);
+            var result = await Http.PostAsJsonAsync("api/auth/login", _userLogin);
+            LoadService.Hide();
 
-            _hideCodeForm = false;
-            _hideLoginForm = true;
+            if (result.IsSuccessStatusCode)
+            {
+                _userSession = await result.Content.ReadFromJsonAsync<UserSession>();
+
+                _hideCodeForm = false;
+                _hideLoginForm = true;
 
 
-            await JsRuntime.InvokeVoidAsync("alert", "O código MFA foi enviado para seu e-mail");
+                await JsRuntime.InvokeVoidAsync("alert", "O código MFA foi enviado para seu e-mail");
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+            }
+
+
+            await AuthStateProvider.GetAuthenticationStateAsync();
         }
-        else
+        catch (Exception e)
         {
-            await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
-
-
-        await AuthStateProvider.GetAuthenticationStateAsync();
+        finally
+        {
+            LoadService.Hide();
+        }
     }
 
 }
