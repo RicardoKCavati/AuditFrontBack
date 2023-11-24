@@ -15,7 +15,11 @@ namespace AuditApp
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+#if DEBUG
             var connString = "Server=localhost;User Id=root;Password=;Database=audit;DefaultCommandTimeout=60; Allow User Variables=true";
+#else
+            var connString = "Server=my-server231101.mariadb.database.azure.com;User Id=rcavati;Password=&rtnNDaS^69s%$;Database=audit;DefaultCommandTimeout=60; Allow User Variables=true";
+#endif
             //todo ver como obter isso do appsettings.json
             builder.Services.AddDbContext<AuditContext>(options => options.UseMySql(connString, ServerVersion.AutoDetect(connString)));
             builder.Services.AddScoped<DbContext, AuditContext>();

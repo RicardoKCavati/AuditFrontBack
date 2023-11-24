@@ -19,6 +19,7 @@ namespace AuditApp.Server.Database
             modelBuilder.Entity<UserModel>().HasKey(user => new { user.UserId });
             modelBuilder.Entity<QuestionDb>().HasKey(question => new { question.QuestionId });
             modelBuilder.Entity<AnswerModel>().HasKey(answer => new { answer.QuestionId, answer.CompanyId });
+            
         }
 
         public DbSet<CompanyModel> Companies { get; set; }
