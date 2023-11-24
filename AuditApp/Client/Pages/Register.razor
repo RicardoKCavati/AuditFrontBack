@@ -7,7 +7,7 @@
 <h3>Cadastro de Usuário</h3>
 <EditForm Model="_userRegister" OnSubmit="RegisterUser">
     <label for="username">Nome</label>
-    <InputText id="username" @bind-Value="_userRegister.Name"/>
+    <InputText id="username" @bind-Value="_userRegister.Name" />
     <label for="username">E-mail</label>
     <InputText id="username" @bind-Value="_userRegister.Email" type="email" />
     <label for="password">Senha</label>
@@ -22,17 +22,24 @@
 
     private async Task RegisterUser()
     {
-        var result = await Http.PostAsJsonAsync("api/auth/register", _userRegister);
+        try
+        {
+            var result = await Http.PostAsJsonAsync("api/auth/register", _userRegister);
 
-        if (result.IsSuccessStatusCode)
-        {
-            NavigationManager.NavigateTo("login", true);
+            if (result.IsSuccessStatusCode)
+            {
+                NavigationManager.NavigateTo("login", true);
+            }
+            else
+            {
+                var e = await result.Content.ReadAsStringAsync();
+                _error = e;
+                await JsRuntime.InvokeVoidAsync("alert", e);
+            }
         }
-        else
+        catch (Exception e)
         {
-            var e = await result.Content.ReadAsStringAsync();
-            _error = e;
-            await JsRuntime.InvokeVoidAsync("alert", e);
+            await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
     }
 }
