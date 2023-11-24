@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuditApp.Server.Migrations
 {
     [DbContext(typeof(AuditContext))]
-    [Migration("20231122141456_EmptyDatabase")]
+    [Migration("20231124145713_EmptyDatabase")]
     partial class EmptyDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
