@@ -14,8 +14,10 @@
     <InputText id="password" @bind-Value="_userRegister.Password" type="password" />
     <button type="submit" class="btn btn-primary ">Registrar</button>
 </EditForm>
+<h1>@_error</h1>
 
 @code {
+    private string _error = string.Empty;
     private UserRegister _userRegister = new UserRegister();
 
     private async Task RegisterUser()
@@ -28,7 +30,9 @@
         }
         else
         {
-            await JsRuntime.InvokeVoidAsync("alert", await result.Content.ReadAsStringAsync());
+            var e = await result.Content.ReadAsStringAsync();
+            _error = e;
+            await JsRuntime.InvokeVoidAsync("alert", e);
         }
     }
 }
