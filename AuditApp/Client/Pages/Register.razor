@@ -33,6 +33,14 @@
             else
             {
                 var e = await result.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(e))
+                {
+                    await JsRuntime.InvokeVoidAsync("alert", "nao tem msg");
+                }
+                else
+                {
+                    await JsRuntime.InvokeVoidAsync("alert", e);
+                }
                 _error = e;
                 await JsRuntime.InvokeVoidAsync("alert", e);
             }
