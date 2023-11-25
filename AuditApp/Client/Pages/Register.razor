@@ -1,5 +1,8 @@
 ﻿@page "/register"
 @using AuditApp.Shared.Models.Dto;
+@using System.Text.Json.Serialization;
+@using System.Text.Json;
+@using System.Text;
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 
@@ -24,7 +27,9 @@
     {
         try
         {
-            var result = await Http.PostAsJsonAsync("https://auditappserver20231124221256.azurewebsites.net/api/auth/register", _userRegister);
+            var stringContent = new StringContent(JsonSerializer.Serialize(_userRegister), Encoding.UTF8, "application/json");
+
+            var result = await Http.PostAsync("https://auditappserver20231124221256.azurewebsites.net/api/auth/register", stringContent);
 
             if (result.IsSuccessStatusCode)
             {
