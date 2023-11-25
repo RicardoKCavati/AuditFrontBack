@@ -24,7 +24,9 @@ namespace AuditApp.Client
             builder.Services.AddAuthorizationCore();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddBlazoredSessionStorage();
-            await builder.Build().RunAsync();
+            var app = builder.Build();
+            
+            await app.RunAsync();
         }
     }
 }

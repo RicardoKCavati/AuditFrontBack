@@ -38,7 +38,7 @@
             else
             {
                 var e = await result.Content.ReadAsStringAsync();
-                _error = e;
+                _error = $"{e}\n\n\n\n{result.StatusCode}";
                 await JsRuntime.InvokeVoidAsync("alert", e);
             }
         }
