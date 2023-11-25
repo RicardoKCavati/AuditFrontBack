@@ -13,9 +13,7 @@ namespace AuditApp.Server.Controllers
         public async ValueTask<ActionResult<Address>> PostTodoItem([FromBody] string cep)
         {
             var errorMessage = string.Empty;
-
             AddressResponse? addressResponse = null;
-
             try
             {
                 var htppClient = new HttpClient();
