@@ -137,3 +137,10 @@ _NCrunch*
 /.vs/Audit/FileContentIndex/31c6ae42-d210-4060-bc51-55cbb0f01682.vsidx
 /.vs/Audit/FileContentIndex/3ae357b9-35a9-450a-9c81-b73ae310c19e.vsidx
 /.vs/Audit/FileContentIndex/7998ce72-dc48-4964-9de1-944cfcaccd98.vsidx
+
+*.vsidx
+*.bin
+*.v7.bin
+/.vs/ProjectEvaluation/audit.metadata.v7.bin
+/.vs/*
+/.vs/Audit/v17/.futdcache.v2
