@@ -24,7 +24,7 @@
     {
         try
         {
-            var result = await Http.PostAsJsonAsync("auditoriasistemasinfo.azurewebsites.net/api/auth/register", _userRegister);
+            var result = await Http.PostAsJsonAsync("https://auditappserver20231124221256.azurewebsites.net/api/auth/register", _userRegister);
 
             if (result.IsSuccessStatusCode)
             {
@@ -47,6 +47,7 @@
         }
         catch (Exception e)
         {
+            await JsRuntime.InvokeVoidAsync("alert", "ué");
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
     }
