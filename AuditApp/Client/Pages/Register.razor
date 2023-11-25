@@ -47,7 +47,7 @@
         }
         catch (Exception e)
         {
-            await JsRuntime.InvokeVoidAsync("alert", "ué");
+            _error = $"{e.Message}\n{e.StackTrace}\n";
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
         }
     }
