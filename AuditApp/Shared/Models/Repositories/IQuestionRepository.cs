@@ -4,5 +4,6 @@
     {
         List<QuestionDb> GetAllQuestions();
         int GetQuestionCount();
+        void InsertMany(List<QuestionDb> questions);
     }
 }

@@ -21,5 +21,11 @@ namespace AuditApp.Server.Database.Repositories
         {
             return _auditContext.Questions.Count();
         }
+
+        public void InsertMany(List<QuestionDb> questions)
+        {
+            _auditContext.Questions.AddRange(questions);
+            _auditContext.SaveChanges();
+        }
     }
 }

@@ -71,8 +71,8 @@ namespace AuditApp.Server.Controllers
                 {
                     QuestionId = i,
                     Question = $"Question number {i}",
-                    Standard = $"Standard number {i}",
-                    Requirement = $"Requirement number {i}",
+                    Standards = $"Standard number {i}",
+                    Requirements = $"Requirement number {i}",
                 });
             }
 
@@ -92,8 +92,8 @@ namespace AuditApp.Server.Controllers
                     QuestionId = question.QuestionId,
                     IsInCompliance = isInCompliance,
                     Question = question.Question,
-                    Requirement = question.Requirement,
-                    Standard = question.Standard,
+                    Requirement = question.Requirements,
+                    Standard = question.Standards,
                     State = isInCompliance ? "Atende" : "Não atende",
                     CompanyId = companyId
                 });

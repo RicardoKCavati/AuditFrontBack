@@ -21,5 +21,10 @@ namespace AuditApp.Server.Controllers
         {
             return _questionRepository.GetQuestionCount();
         }
+
+        public void AddRangeOfQuestions(List<QuestionDb> questions)
+        {
+            _questionRepository.InsertMany(questions);
+        }
     }
 }

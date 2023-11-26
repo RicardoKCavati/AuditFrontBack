@@ -8,11 +8,11 @@ namespace AuditApp.Shared.Models
     {
         [JsonPropertyName("QuestionId")]
         public int QuestionId { get; set; }
-        [JsonPropertyName("Requirement")]
-        public string Requirement { get; set; } = string.Empty;
+        [JsonPropertyName("Requirements")]
+        public string Requirements { get; set; } = string.Empty;
         [JsonPropertyName("Question")]
         public string Question { get; set; } = string.Empty;
-        [JsonPropertyName("Standard")]
-        public string Standard { get; set; } = string.Empty;
+        [JsonPropertyName("Standards")]
+        public string Standards { get; set; } = string.Empty;
     }
 }
