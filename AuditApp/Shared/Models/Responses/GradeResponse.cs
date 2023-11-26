@@ -10,7 +10,6 @@ namespace AuditApp.Shared.Models.Responses
         public int AnsweredCount { get; set; }
         [JsonPropertyName("UnansweredCount")]
         public int UnansweredCount { get; set; }
-
         [JsonPropertyName("InComplianceQuestions")]
         public int InComplianceQuestions { get; set; }
         [JsonPropertyName("NotInComplianceQuestions")]

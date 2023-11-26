@@ -4,16 +4,34 @@
 @inject HttpClient Http
 @inject PreloadService LoadService
 <div class="card">
-    <h5 class="card-header">@Question</h5>
-    <div class="card-body">
-        <h5 class="card-title">@Requirement</h5>
-        <p class="card-text"></p>
+    <h4 class="card-header">@Question</h4>
+    <h5 class="card-header">Número da pergunta: @QuestionId</h5>    
+    <h6 class="card-header">Referências</h6>    
+    <div style="display: inline-flex;">
+        <div class="card" style="width: 50%;">
+            <div class="card-header">
+                Normas
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var standards in Standards)
+                {
+                    <li class="list-group-item">@standards</li>
+                }
+            </ul>
+        </div>
+        <div class="card" style="width: 50%;">
+            <div class="card-header">
+                Requisitos
+            </div>
+            <ul class="list-group list-group-flush">
+                @foreach (var requirement in Requirements)
+                {
+                    <li class="list-group-item">@requirement</li>
+                }
+            </ul>
+        </div>
     </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">@Standard</li>
-        <li class="list-group-item">@State</li>
-        @*<li class="list-group-item">Vestibulum at eros</li>*@
-    </ul>
+    <h5 class="card-header">Estado atual: @State</h5>
     <div class="card-body">
         <button class="btn btn-success" @onclick="SetStatusToTrue">Atende</button>
         <button class="btn btn-danger" @onclick="SetStatusToFalse">Não atende</button>
@@ -41,6 +59,10 @@
 
     [Parameter]
     public string CompanyId { get; set; } = string.Empty;
+
+    public List<string> Standards { get; set; } = new List<string>();
+    public List<string> Requirements { get; set; } = new List<string>();
+
 
     private async Task SendValue(bool complies)
     {
@@ -86,6 +108,8 @@
 
     protected override void OnInitialized()
     {
+        Requirements = Requirement.Split(';').ToList();
+        Standards = Standard.Split(';').ToList();
         IsInCompliance = IsInCompliance;
         base.OnInitialized();
     }

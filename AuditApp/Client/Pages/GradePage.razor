@@ -1,13 +1,43 @@
 ﻿@page "/avaliação_empresa"
+@using AuditApp.Shared.Models.Responses;
 @using BlazorBootstrap;
 @inject IJSRuntime JsRuntime
 @inject PreloadService PreloadService
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 <h3>Avaliação da Empresa</h3>
+<h5 class="card-header">
+    Total de perguntas: @_questionCount
+</h5>
 
+<h5 class="card-header">
+    Perguntas respondidas: @_answeredCount
+</h5>
+<h5 class="card-header">
+    Perguntas não respondidas: @_unansweredCount
+</h5>
+<h5 class="card-header">
+    Requisitos atendidos: @_inComplianceQuestions
+</h5>
+<h5 class="card-header">
+    Requisitos não atendidos (dentro dos respondidos): @_notInComplianceQuestions
+</h5>
+<h5 class="card-header">
+    Porcentagem da conformidade com desenvolvimento seguro: @_percentInCompliance.ToString("0.00") %
+</h5>
+<h5 class="card-header">
+    Restante para atingir conformidade completa: @_remainingPercentage.ToString("0.00") %
+</h5>
 @code {
     private string _companyId = string.Empty;
+    private float _questionCount = 0;
+    private float _answeredCount = 0;
+    private float _unansweredCount = 0;
+    private float _inComplianceQuestions = 0;
+    private float _notInComplianceQuestions = 0;
+    private float _percentInCompliance = 0;
+    private float _remainingPercentage = 0;
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -34,8 +64,23 @@
 
             if (response.IsSuccessStatusCode)
             {
-                var a = response.Content.ReadAsStringAsync().Result;
-                //TODO CONTINUAR AQUI
+                var gradeResponse = response.Content.ReadFromJsonAsync<GradeResponse>().Result;
+                _questionCount = gradeResponse.QuestionCount;
+                _answeredCount = gradeResponse.AnsweredCount;
+                _unansweredCount = gradeResponse.UnansweredCount;
+                _inComplianceQuestions = gradeResponse.InComplianceQuestions;
+                _notInComplianceQuestions = gradeResponse.NotInComplianceQuestions;
+
+                try
+                {
+                    _percentInCompliance = (_inComplianceQuestions / _questionCount) * 100;
+                }
+                catch (Exception e)
+                {
+                    _percentInCompliance = 0;
+                }
+
+                _remainingPercentage = 100 - _percentInCompliance;
             }
 
             PreloadService.Hide();
