@@ -128,7 +128,14 @@ namespace AuditApp.Server.Controllers
                     return StatusCode(500, "Preencha todas as informações necessárias");
                 }
 
-                var userModel = new UserModel()
+                var userModel = _userService.GetUserByEmail(register.Email);
+
+                if(userModel != null)
+                {
+                    return StatusCode(500, "Este e-mail não pode ser usado!");
+                }
+
+                userModel = new UserModel()
                 {
                     Email = register.Email,
                     Password = register.Password,

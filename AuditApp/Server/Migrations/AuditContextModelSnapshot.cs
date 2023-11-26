@@ -115,11 +115,11 @@ namespace AuditApp.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Requirement")
+                    b.Property<string>("Requirements")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Standard")
+                    b.Property<string>("Standards")
                         .IsRequired()
                         .HasColumnType("longtext");
 

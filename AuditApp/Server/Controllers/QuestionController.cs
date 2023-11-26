@@ -63,18 +63,6 @@ namespace AuditApp.Server.Controllers
 
             var dbQuestions = _questionService.GetAllQuestionsFromDatabase();
             //TODO BUSCAR AS PERGUNTAS CADASTRADAS NO BANCO DE DADOS
-            dbQuestions = new List<QuestionDb>();
-            for (int i = 0; i < 1000; i++)
-            {
-
-                dbQuestions.Add(new QuestionDb
-                {
-                    QuestionId = i,
-                    Question = $"Question number {i}",
-                    Standards = $"Standard number {i}",
-                    Requirements = $"Requirement number {i}",
-                });
-            }
 
             foreach (var question in dbQuestions)
             {

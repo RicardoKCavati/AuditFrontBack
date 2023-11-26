@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuditApp.Server.Migrations
 {
     [DbContext(typeof(AuditContext))]
-    [Migration("20231124145713_EmptyDatabase")]
+    [Migration("20231126214106_EmptyDatabase")]
     partial class EmptyDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,11 +117,11 @@ namespace AuditApp.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Requirement")
+                    b.Property<string>("Requirements")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Standard")
+                    b.Property<string>("Standards")
                         .IsRequired()
                         .HasColumnType("longtext");
 
