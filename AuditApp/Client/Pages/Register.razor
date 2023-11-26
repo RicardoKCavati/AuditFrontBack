@@ -3,8 +3,10 @@
 @using System.Text.Json.Serialization;
 @using System.Text.Json;
 @using System.Text;
+@using BlazorBootstrap;
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject PreloadService LoadService
 
 @inject HttpClient Http
 <h3>Cadastro de Usuário</h3>
@@ -33,6 +35,7 @@
     {
         try
         {
+            LoadService.Show(SpinnerColor.Dark);
             var stringContent = new StringContent(JsonSerializer.Serialize(_userRegister), Encoding.UTF8, "application/json");
 
             /*https://auditappserver20231124221256.azurewebsites.net/*/
@@ -53,6 +56,10 @@
         {
             _error = $"{e.Message}\n{e.StackTrace}\n";
             await JsRuntime.InvokeVoidAsync("alert", e.Message);
+        }
+        finally
+        {
+            LoadService.Hide();
         }
     }
 }

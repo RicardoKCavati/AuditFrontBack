@@ -57,7 +57,7 @@
             {
                 var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
                 await customAuthStateProvider.UpdateAuthenticationState(_userSession);
-                await JsRuntime.InvokeVoidAsync("alert", "Código válido, você será redirecionado para a página inicial");
+                await JsRuntime.InvokeVoidAsync("alert", "Login efetuado com sucesso, você será redirecionado para a página inicial");
                 NavigationManager.NavigateTo("/", true);
                 return;
             }
