@@ -21,7 +21,7 @@ namespace AuditApp.Server.Services
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(MyEmail),
+                From = new MailAddress(MyEmail, "Auditoria de Sistemas de Informação"),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true

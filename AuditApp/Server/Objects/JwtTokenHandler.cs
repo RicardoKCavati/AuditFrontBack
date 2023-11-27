@@ -10,7 +10,7 @@ namespace AuditApp.Server.Objects
 {
     public class JwtTokenHandler
     {
-        private const int JwtTokenValidMinutes = 240;
+        private const int JwtTokenValidMinutes = 15;
 
         public UserSession? GenerateJwtToken(UserModel userModel)
         {

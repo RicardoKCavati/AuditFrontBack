@@ -28,5 +28,6 @@
     {
         var customAuthStateProvider = (CustomAuthStateProvider)AuthStateProvider;
         await customAuthStateProvider.UpdateAuthenticationState(null);
+        NavigationManager.NavigateTo("/");
     }
 }
