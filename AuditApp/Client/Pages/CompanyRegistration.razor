@@ -31,10 +31,10 @@
                    class="form-control" />
     </EditForm>
     <h4>Endereço</h4>
-    <input @bind="_companyRegistration.Address.Street" class="form-control" placeholder="Rua" disabled="disabled" />
-    <input @bind="_companyRegistration.Address.Neighborhood" class="form-control" placeholder="Bairro" disabled="disabled" />
-    <input @bind="_companyRegistration.Address.City" class="form-control" placeholder="Cidade" disabled="disabled" />
-    <input @bind="_companyRegistration.Address.State" class="form-control" placeholder="Estado" disabled="disabled" />
+    <input @bind="_companyRegistration.Address.Street" class="form-control" placeholder="Rua"  />
+    <input @bind="_companyRegistration.Address.Neighborhood" class="form-control" placeholder="Bairro"  />
+    <input @bind="_companyRegistration.Address.City" class="form-control" placeholder="Cidade"  />
+    <input @bind="_companyRegistration.Address.State" class="form-control" placeholder="Estado"  />
     <input @bind="_companyRegistration.Address.Number" class="form-control" placeholder="Número" />
     <input @bind="_companyRegistration.Address.Complement" class="form-control" placeholder="Complemento" />
     <button @onclick="SaveCompany" hidden="@_hideLoginButton" class="btn btn-primary">Cadastrar empresa</button>
@@ -217,6 +217,7 @@
 
     private async ValueTask FillCep()
     {
+        return;
         try
         {
             var response = await Http.PostAsJsonAsync("https://localhost:7154/Cep/GetCepInfo", _companyRegistration.Address.Cep);
